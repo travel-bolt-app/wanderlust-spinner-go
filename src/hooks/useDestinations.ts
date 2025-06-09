@@ -26,7 +26,23 @@ export const useDestinations = () => {
       if (error) {
         console.error('Error fetching saved destinations:', error);
       } else {
-        setSavedDestinations(data || []);
+        // Transform database records to match SavedDestination interface
+        const transformedData: SavedDestination[] = (data || []).map(record => ({
+          id: record.id,
+          name: record.destination_name,
+          country: record.country,
+          city: record.city,
+          latitude: record.latitude,
+          longitude: record.longitude,
+          tagline: record.tagline,
+          budget_estimate: record.budget_estimate,
+          best_time_to_visit: record.best_time_to_visit,
+          visa_requirements: record.visa_requirements,
+          activities: record.activities,
+          user_id: record.user_id,
+          saved_at: record.saved_at,
+        }));
+        setSavedDestinations(transformedData);
       }
     } catch (error) {
       console.error('Saved destinations fetch error:', error);
@@ -172,7 +188,7 @@ export const useDestinations = () => {
 
   // Check if destination is saved
   const isDestinationSaved = (destinationName: string): boolean => {
-    return savedDestinations.some(dest => dest.destination_name === destinationName);
+    return savedDestinations.some(dest => dest.name === destinationName);
   };
 
   useEffect(() => {
